@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransiction extends StatefulWidget {
   Function addTx;
@@ -12,7 +13,7 @@ class NewTransiction extends StatefulWidget {
 
 class _NewTransictionState extends State<NewTransiction> {
   TextEditingController _controller = TextEditingController();
-
+  DateTime selectedTime = DateTime.now();
   TextEditingController _controller2 = TextEditingController();
 
   void _addTransiction() {
@@ -23,6 +24,21 @@ class _NewTransictionState extends State<NewTransiction> {
     }
     widget.addTx(title, amount);
     Navigator.of(context).pop();
+  }
+
+  void _presentshowDatapicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(DateTime.now().year),
+      lastDate: DateTime.now(),
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          selectedTime = value;
+        });
+      }
+    });
   }
 
   @override
@@ -48,15 +64,23 @@ class _NewTransictionState extends State<NewTransiction> {
             Container(
               height: 70,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("No Date Chose!"),
-                  TextButton(onPressed: (){}, child: Text("Chosen Date",))
+                  Text("Picked Date   " + DateFormat.yMMMEd().format(selectedTime)),
+                  TextButton(
+                      onPressed: _presentshowDatapicker,
+                      child: Text(
+                        "Chosen Date",
+                      ))
                 ],
               ),
             ),
             ElevatedButton(
                 onPressed: () => _addTransiction(),
-                child: Text("New Transiction",style: TextStyle(fontWeight: FontWeight.bold),))
+                child: Text(
+                  "New Transiction",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ))
           ],
         ),
       ),
